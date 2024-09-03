@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class PlayerController : MonoBehaviour
 {
@@ -24,9 +25,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool _jumpPressed;
     [SerializeField] bool _grounded;
 
+
+    public bool Grounded => _grounded;
     int _currentJump;
     float _speedStartMoveTimer = 0;
-
+    bool _wasGrounded;
     void Start()
     {
         _currentJump = _availableJumps;
@@ -55,6 +58,11 @@ public class PlayerController : MonoBehaviour
         //_rigidbody.MovePosition(transform.position + );
     }
 
+    public void GiveInertia(Vector3 velocity)
+    {
+        _speedBeforeJump += velocity;
+    }
+
     void FixedUpdate()
     {
         _grounded = Physics.CheckSphere(GetGroundCheckerPos(), _groundCheckerRadius, 1 << LayerMask.NameToLayer("Ground"));
@@ -62,7 +70,6 @@ public class PlayerController : MonoBehaviour
         //relative to left and right local axis
         velocity = (transform.right * _movingSignal.x + transform.forward * _movingSignal.z).normalized;
         velocity *= Time.deltaTime * _playerSpeed * GetSmoothSpeedValue();
-
         if (_jumpPressed)
         {
             if(_currentJump > 0)
@@ -78,9 +85,17 @@ public class PlayerController : MonoBehaviour
         if (_grounded)
         {
             _currentJump = _availableJumps;
+            _speedBeforeJump = Vector3.zero;
+
+            if (!_wasGrounded)//for only one frame
+            {
+                _rigidbody.velocity = Vector3.zero;
+                _wasGrounded = true;
+            }
         }
         else
         {
+            _wasGrounded = false;
             bool isFalling = _rigidbody.velocity.y < 0;
             if (isFalling && _rigidbody.velocity.y > -_fallSpeedCap)
             {
@@ -88,16 +103,18 @@ public class PlayerController : MonoBehaviour
             }
             Strafe();
         }
-
-        _rigidbody.MovePosition(transform.position + velocity);
-
+        Vector3 position = transform.position + velocity;
+        if (transform.parent != null)
+            position = transform.parent.TransformPoint(transform.localPosition + velocity);
+        //_rigidbody.MovePosition(position);
+        transform.position = position;
     }
 
     void Jump()
     {
         StopAllCoroutines();
         StartCoroutine(JumpRoutine());
-        _speedBeforeJump = velocity;
+        _speedBeforeJump += velocity;
     }
 
     IEnumerator JumpRoutine()
@@ -128,7 +145,7 @@ public class PlayerController : MonoBehaviour
 
     Vector3 GetGroundCheckerPos()
     {
-        return _collider.transform.position - _collider.transform.up * (_collider.bounds.extents.y - _groundCheckerRadius);
+        return _collider.transform.position - _collider.transform.up * (_collider.bounds.extents.y - _groundCheckerRadius + 0.01f);
     }
 
     float GetSmoothSpeedValue()
