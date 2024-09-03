@@ -364,7 +364,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -620,15 +620,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a87c2192b72f3044cb7e331a9509d54f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerSpeed: 50
-  _strafePlayerSpeed: 10
-  _jumpPower: 400
-  _fallAcceleration: 50
+  _playerSpeed: 14
+  _strafePlayerSpeed: 1
+  _jumpPower: 250
+  _fallAcceleration: 7
   _fallSpeedCap: 100
   _rigidbody: {fileID: 1986888119}
   _collider: {fileID: 1986888120}
   _groundCheckerRadius: 0.2
-  _groundCheckerOffset: -0.13
+  _groundCheckerOffset: -0.17
   _jumpPressed: 0
   _hasJumped: 0
   _grounded: 0
