@@ -16,22 +16,6 @@ public class PostProcessingController : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.S))
-        {
-            Mood next;
-            switch(Random.Range(0, 4))
-            {
-                default:
-                    next = Mood.fearful; break;
-                case 1:
-                    next = Mood.angry; break;
-                case 2:
-                    next = Mood.happy; break;
-                case 3:
-                    next = Mood.sad; break;
-            }
-            MoodManager.SetMood(next);
-        }
 
         //this fucking sucks
         float fadeout = Time.deltaTime*switchSpeed;
