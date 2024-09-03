@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -6,27 +7,29 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float _playerSpeedIncrease = 8f;
     [SerializeField] float _strafePlayerSpeed;
     [SerializeField] float _jumpPower;
+    [SerializeField] AnimationCurve _jumpCurve;
+    [SerializeField] int _availableJumps = 1;
     [SerializeField] float _fallAcceleration;
     [SerializeField] float _fallSpeedCap;
 
     [SerializeField] Rigidbody _rigidbody;
     [SerializeField] Collider _collider;
     [SerializeField] float _groundCheckerRadius;
-    [SerializeField] float _groundCheckerOffset;
-    [SerializeField] AnimationCurve _dampCurve;
+    //[SerializeField] float _groundCheckerOffset;
     Vector3 _movingSignal;
+    Vector3 velocity;
     Vector3 _speedBeforeJump;
 
     [Header("For debugging only, don't touch it")]
     [SerializeField] bool _jumpPressed;
-    [SerializeField] bool _hasJumped;
     [SerializeField] bool _grounded;
 
+    int _currentJump;
     float _speedStartMoveTimer = 0;
 
     void Start()
     {
-                
+        _currentJump = _availableJumps;
     }
 
     void OnDrawGizmos()
@@ -41,63 +44,91 @@ public class PlayerController : MonoBehaviour
 
         Gizmos.DrawSphere(groundCheckerPos, _groundCheckerRadius);
     }
-    float _airTimer;
 
     void Update()
     {
-        _movingSignal = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")) ;
-        _jumpPressed = Input.GetKeyDown(KeyCode.Space);
-        _grounded = Physics.CheckSphere(GetGroundCheckerPos(), _groundCheckerRadius, 1 << LayerMask.NameToLayer("Ground"));
+        _movingSignal = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        if(Input.GetKeyDown(KeyCode.Space))
+            _jumpPressed = true;
+        
 
+        //_rigidbody.MovePosition(transform.position + );
+    }
+
+    void FixedUpdate()
+    {
+        _grounded = Physics.CheckSphere(GetGroundCheckerPos(), _groundCheckerRadius, 1 << LayerMask.NameToLayer("Ground"));
+        
         //relative to left and right local axis
-        Vector3 velocity = (transform.right * _movingSignal.x + transform.forward * _movingSignal.z).normalized;
+        velocity = (transform.right * _movingSignal.x + transform.forward * _movingSignal.z).normalized;
         velocity *= Time.deltaTime * _playerSpeed * GetSmoothSpeedValue();
 
-        if (!_grounded)
+        if (_jumpPressed)
         {
-            //keeping velocity while jumping
-            _speedBeforeJump += _strafePlayerSpeed * Time.deltaTime * velocity.normalized;
-            //caping strafe velocity to grounded velocity
-            float speedCap = _playerSpeed * Time.deltaTime;
-            if (_speedBeforeJump.magnitude > speedCap)
-                _speedBeforeJump = _speedBeforeJump.normalized * speedCap;
-            velocity = _speedBeforeJump;
-            _airTimer += Time.deltaTime;
-        }
-
-        if (_jumpPressed && _grounded && !_hasJumped)
-        {
-            _rigidbody.AddForce(Vector3.up * _jumpPower, ForceMode.Impulse);
-
-            _speedBeforeJump = velocity;
-            _hasJumped = true;
+            if(_currentJump > 0)
+            {
+                Jump();
+                _grounded = false;
+                _currentJump--;
+            }
             _jumpPressed = false;
-            _grounded = false;
+
         }
 
-        bool isRising = _rigidbody.velocity.y < 0;
-
-        if (_hasJumped && !_grounded && isRising)
+        if (_grounded)
         {
-            if (_rigidbody.velocity.y > -_fallSpeedCap)
+            _currentJump = _availableJumps;
+        }
+        else
+        {
+            bool isFalling = _rigidbody.velocity.y < 0;
+            if (isFalling && _rigidbody.velocity.y > -_fallSpeedCap)
+            {
                 _rigidbody.AddForce(-Vector3.up * _fallAcceleration);
-
+            }
+            Strafe();
         }
 
-        if (_grounded && _airTimer > .02f)
+        _rigidbody.MovePosition(transform.position + velocity);
+
+    }
+
+    void Jump()
+    {
+        StopAllCoroutines();
+        StartCoroutine(JumpRoutine());
+        _speedBeforeJump = velocity;
+    }
+
+    IEnumerator JumpRoutine()
+    {
+        float time = .5f;
+        while(time > 0)
         {
-            _hasJumped = false;
-            _airTimer = 0;
-            //_rigidbody.velocity = new Vector3();
+            //from 1 to 0
+            _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, _jumpCurve.Evaluate(time / .5f) * _jumpPower, _rigidbody.velocity.z);
+            yield return null;
+            time -= Time.deltaTime;
         }
+        _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, -.01f, _rigidbody.velocity.z);
 
-        transform.position += velocity;
-        //_rigidbody.MovePosition(transform.position + );
+    }
+
+    void Strafe()
+    {
+        //keeping velocity while jumping
+        _speedBeforeJump += _strafePlayerSpeed * Time.deltaTime * velocity.normalized;
+        //caping strafe velocity to grounded velocity
+        float speedCap = _playerSpeed * Time.deltaTime;
+        if (_speedBeforeJump.magnitude > speedCap)
+            _speedBeforeJump = _speedBeforeJump.normalized * speedCap;
+
+        velocity = _speedBeforeJump;
     }
 
     Vector3 GetGroundCheckerPos()
     {
-        return _collider.transform.position - _collider.transform.up * (_collider.bounds.extents.y + _groundCheckerOffset);
+        return _collider.transform.position - _collider.transform.up * (_collider.bounds.extents.y - _groundCheckerRadius);
     }
 
     float GetSmoothSpeedValue()
@@ -106,7 +137,7 @@ public class PlayerController : MonoBehaviour
             _speedStartMoveTimer += Time.deltaTime * _playerSpeedIncrease;
         else _speedStartMoveTimer = 0;
 
-        _speedStartMoveTimer = _dampCurve.Evaluate(Mathf.Min(_speedStartMoveTimer, 1));
+        _speedStartMoveTimer = Mathf.Min(_speedStartMoveTimer, 1);
         return _speedStartMoveTimer;
     }
 }
