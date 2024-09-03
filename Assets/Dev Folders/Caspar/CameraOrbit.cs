@@ -15,7 +15,7 @@ public class CameraOrbit : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (Input.GetKey(KeyCode.Escape))
             Cursor.lockState = CursorLockMode.None;
@@ -33,5 +33,7 @@ public class CameraOrbit : MonoBehaviour
         Quaternion up = Quaternion.AngleAxis(mousePos.y * mouseSensitivity, Vector3.left);
         transform.rotation = rot * up;
         transform.position = Target.position - transform.forward * cameraDist + .2f * transform.right * cameraDist + .1f * transform.up * cameraDist;
+
+        Target.transform.rotation = rot;
     }
 }
