@@ -625,10 +625,35 @@ MonoBehaviour:
   _jumpPower: 250
   _fallAcceleration: 7
   _fallSpeedCap: 100
+  _directionChangeSmoothness: 0.309
   _rigidbody: {fileID: 1986888119}
   _collider: {fileID: 1986888120}
   _groundCheckerRadius: 0.2
   _groundCheckerOffset: -0.17
+  _dampCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.09282792
+      outSlope: 0.09282792
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.18960413
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2.3733587
+      outSlope: 2.3733587
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.09140521
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _jumpPressed: 0
   _hasJumped: 0
   _grounded: 0
