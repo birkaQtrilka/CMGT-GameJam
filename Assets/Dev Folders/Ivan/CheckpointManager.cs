@@ -20,9 +20,14 @@ public class CheckpointManager : MonoBehaviour
 
     private void Awake()
     {
-        collection = GetComponentsInChildren<Transform>().ToList();
+        foreach (Transform t in GetComponentsInChildren<Transform>())
+        {
+            if (t.CompareTag("Checkpoint")) collection.Add(t);
+        }
+
         if (collection.Count > 0)
             currentCheckpoint = collection[0];
+        
 
     }
     // Update is called once per frame
