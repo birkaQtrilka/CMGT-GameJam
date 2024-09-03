@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using static UnityEngine.RuleTile.TilingRuleOutput;
@@ -25,7 +26,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool _jumpPressed;
     [SerializeField] bool _grounded;
 
-
+    Action _jumpCall;
     public bool Grounded => _grounded;
     int _currentJump;
     float _speedStartMoveTimer = 0;
@@ -74,9 +75,8 @@ public class PlayerController : MonoBehaviour
         {
             if(_currentJump > 0)
             {
-                Jump();
+                Jump(_jumpPower);
                 _grounded = false;
-                _currentJump--;
             }
             _jumpPressed = false;
 
@@ -103,27 +103,36 @@ public class PlayerController : MonoBehaviour
             }
             Strafe();
         }
+        _jumpCall?.Invoke();
+        _jumpCall = null;
         Vector3 position = transform.position + velocity;
-        if (transform.parent != null)
-            position = transform.parent.TransformPoint(transform.localPosition + velocity);
+        //if (transform.parent != null)
+            //position = transform.parent.TransformPoint(transform.localPosition + velocity);
         //_rigidbody.MovePosition(position);
         transform.position = position;
     }
 
-    void Jump()
+    void Jump(float jumpPower)
     {
         StopAllCoroutines();
-        StartCoroutine(JumpRoutine());
+        StartCoroutine(JumpRoutine(jumpPower));
         _speedBeforeJump += velocity;
+        _currentJump--;
+
     }
 
-    IEnumerator JumpRoutine()
+    public void RegisterJump(float jumpPower)
+    {
+        _jumpCall = () => Jump(jumpPower);
+    }
+
+    IEnumerator JumpRoutine(float jumpPower)
     {
         float time = .5f;
         while(time > 0)
         {
             //from 1 to 0
-            _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, _jumpCurve.Evaluate(time / .5f) * _jumpPower, _rigidbody.velocity.z);
+            _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, _jumpCurve.Evaluate(time / .5f) * jumpPower, _rigidbody.velocity.z);
             yield return null;
             time -= Time.deltaTime;
         }
