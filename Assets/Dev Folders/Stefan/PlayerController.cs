@@ -5,9 +5,10 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float _playerSpeed;
-    [SerializeField] float _playerSpeedIncrease = 8f;
-    [SerializeField] float _strafePlayerSpeed;
+    public float PlayerSpeed;
+    public float StrafePlayerSpeed;
+
+    [SerializeField] float _playerSpeedIncrease = 3.7f;
     [SerializeField] float _jumpPower;
     [SerializeField] AnimationCurve _jumpCurve;
     [SerializeField] int _availableJumps = 1;
@@ -75,7 +76,7 @@ public class PlayerController : MonoBehaviour
         _grounded = GetIsGrounded();
         //relative to left and right local axis
         velocity = (transform.right * _movingSignal.x + transform.forward * _movingSignal.z).normalized;
-        velocity *= Time.deltaTime * _playerSpeed * GetSmoothSpeedValue();
+        velocity *= Time.deltaTime * PlayerSpeed * GetSmoothSpeedValue();
 
         DoPlatform();
 
@@ -189,9 +190,9 @@ public class PlayerController : MonoBehaviour
     void Strafe()
     {
         //keeping velocity while jumping
-        _speedBeforeJump += _strafePlayerSpeed * Time.deltaTime * velocity.normalized;
+        _speedBeforeJump += StrafePlayerSpeed * Time.deltaTime * velocity.normalized;
         //caping strafe velocity to grounded velocity
-        float speedCap = _playerSpeed * Time.deltaTime;
+        float speedCap = PlayerSpeed * Time.deltaTime;
         if (_speedBeforeJump.magnitude > speedCap)
             _speedBeforeJump = _speedBeforeJump.normalized * speedCap;
 

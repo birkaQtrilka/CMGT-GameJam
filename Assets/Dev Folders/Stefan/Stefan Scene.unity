@@ -232,7 +232,7 @@ MonoBehaviour:
   MouseSensitivity: 3
   _xClampMin: -90
   _xClampMax: 20
-  cameraDist: 10
+  _offset: {x: 2, y: 1, z: 10}
 --- !u!114 &382089793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -560,6 +560,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1986888124}
   - component: {fileID: 1986888123}
+  - component: {fileID: 1986888125}
   - component: {fileID: 1986888122}
   - component: {fileID: 1986888121}
   - component: {fileID: 1986888120}
@@ -683,9 +684,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a87c2192b72f3044cb7e331a9509d54f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerSpeed: 14
-  _playerSpeedIncrease: 8
-  _strafePlayerSpeed: 1
+  PlayerSpeed: 10
+  StrafePlayerSpeed: 1
+  _playerSpeedIncrease: 3.7
   _jumpPower: 15
   _jumpCurve:
     serializedVersion: 2
@@ -734,6 +735,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1986888125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1986888118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b29b057dff628374c810deb236d33e88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RunPlayerSpeedIncrease: 1
+  StrafePlayerSpeedIncrease: 0.3
+  SpeedTimer: 2
 --- !u!1001 &3246539917230840357
 PrefabInstance:
   m_ObjectHideFlags: 0
