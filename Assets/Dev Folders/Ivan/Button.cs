@@ -7,6 +7,8 @@ using UnityEngine.Events;
 public class Button : MonoBehaviour
 {
     public UnityEvent ButtonPressed;
+    public UnityEvent ButtonHold;
+    public UnityEvent ButtonReleased;
     void Start()
     {
         
@@ -23,6 +25,20 @@ public class Button : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             ButtonPressed?.Invoke();
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            ButtonHold?.Invoke();
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            ButtonReleased?.Invoke();
         }
     }
 }

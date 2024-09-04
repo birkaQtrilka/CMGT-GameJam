@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    public bool isOpen {get; private set;}
+    public bool isOpen {get; protected set;}
     void Start()
     {
         
