@@ -12,6 +12,8 @@ public class HeavyDoor : Door
     public float closeSpeed = 1;
     public Vector3 openOffset = Vector3.up;
     Vector3 initialPos;
+
+    public AnimationCurve curve = AnimationCurve.Linear(0,0,1,1);
     void Start()
     {
         initialPos = transform.position;
@@ -24,7 +26,7 @@ public class HeavyDoor : Door
             OpenStep();
         else
             CloseStep();
-        transform.position = initialPos + openOffset * openness;
+        transform.position = initialPos + openOffset * curve.Evaluate(openness);
     }
 
     public void OpenStep ()

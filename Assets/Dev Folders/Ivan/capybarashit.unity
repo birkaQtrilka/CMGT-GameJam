@@ -38957,9 +38957,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a87c2192b72f3044cb7e331a9509d54f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerSpeed: 12.86
+  PlayerSpeed: 3.34
+  StrafePlayerSpeed: 1.9
   _playerSpeedIncrease: 8
-  _strafePlayerSpeed: 3.49
   _jumpPower: 7.04
   _jumpCurve:
     serializedVersion: 2
@@ -46705,6 +46705,30 @@ MonoBehaviour:
   openSpeed: 1
   closeSpeed: 1
   openOffset: {x: 0, y: 1, z: 0}
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &1774159738
 PrefabInstance:
   m_ObjectHideFlags: 0
