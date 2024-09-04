@@ -7,7 +7,7 @@ public class PlayerMoodHandler : MonoBehaviour
 
     public PlayerController Controller { get; private set; }
     public Collider ControllerCollider { get; private set; }
-
+    public CharacterEmotionVisualizer Animator { get; private set; }
     State _currentState;
 
     readonly Fear _fear = new();
@@ -19,6 +19,8 @@ public class PlayerMoodHandler : MonoBehaviour
     {
         Controller = GetComponent<PlayerController>();
         ControllerCollider = Controller.GetComponent<Collider>();
+        Animator = GetComponentInChildren<CharacterEmotionVisualizer>();
+
         _currentState = _sad;
         _currentState.OnEnter(this);
     }
@@ -65,6 +67,7 @@ public class PlayerMoodHandler : MonoBehaviour
         {
             _speedBooster = machine.Controller.GetComponent<SpeedBooster>();
             _speedBooster.enabled = true;
+            machine.Animator.ChangeEmotion(Emotion.Fear);
         }
 
         public override void OnTransition(PlayerMoodHandler machine)
@@ -78,6 +81,7 @@ public class PlayerMoodHandler : MonoBehaviour
         public override void OnEnter(PlayerMoodHandler machine)
         {
             machine.Controller.MaxJumps = 2;
+            machine.Animator.ChangeEmotion(Emotion.Happy);
         }
 
         public override void OnTransition(PlayerMoodHandler machine)
@@ -95,6 +99,7 @@ public class PlayerMoodHandler : MonoBehaviour
         {
             _originalMask = machine.ControllerCollider.excludeLayers;
             machine.ControllerCollider.excludeLayers = machine.SadMask;
+            machine.Animator.ChangeEmotion(Emotion.Sad);
         }
 
         public override void OnTransition(PlayerMoodHandler machine)
@@ -110,6 +115,7 @@ public class PlayerMoodHandler : MonoBehaviour
         {
             _flameShooter = machine.Controller.GetComponent<FlameShooter>();
             _flameShooter.enabled = true;
+            machine.Animator.ChangeEmotion(Emotion.Anger);
         }
 
         public override void OnTransition(PlayerMoodHandler machine)
