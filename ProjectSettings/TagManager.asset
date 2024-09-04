@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Checkpoint
   - Danger
+  - Platform
   layers:
   - Default
   - TransparentFX
@@ -14,8 +15,8 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
+  - FlameDestroy
+  - SadPassThrough
   - 
   - 
   - 
