@@ -22,8 +22,6 @@ public class Checkpoint : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             manager.currentCheckpoint = transform;
-
-            Debug.Log("Checkpoint taken: " + name);
             //change checkpoint color or whatever here
         }
 

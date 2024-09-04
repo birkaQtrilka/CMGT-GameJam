@@ -18,11 +18,13 @@ public class Door : MonoBehaviour
 
     public virtual void Open ()
     {
-        isOpen = true;
+        isOpen = true; 
+        Debug.Log("THY PAHT SHALL OPENETH");
     }
     public virtual void Close ()
     {
         isOpen = false;
+        Debug.Log("THOU SHANT PASSETH");
     }
     public virtual void Toggle()
     {
