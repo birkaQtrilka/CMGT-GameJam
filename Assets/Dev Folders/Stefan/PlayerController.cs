@@ -7,11 +7,11 @@ public class PlayerController : MonoBehaviour
 {
     public float PlayerSpeed;
     public float StrafePlayerSpeed;
+    public int MaxJumps = 1;
 
     [SerializeField] float _playerSpeedIncrease = 3.7f;
     [SerializeField] float _jumpPower;
     [SerializeField] AnimationCurve _jumpCurve;
-    [SerializeField] int _availableJumps = 1;
     [SerializeField] float _fallAcceleration;
     [SerializeField] float _fallSpeedCap;
 
@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        _currentJump = _availableJumps;
+        _currentJump = MaxJumps;
     }
 
     void OnDrawGizmos()
@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour
         if (_grounded)
         {
             //_lastFrameCurrentJump = _currentJump;
-            _currentJump = _availableJumps;
+            _currentJump = MaxJumps;
             _speedBeforeJump = Vector3.zero;
 
             if (!_wasGrounded)//for only one frame
@@ -169,7 +169,7 @@ public class PlayerController : MonoBehaviour
         {
             //Debug.Log(jumpCount);
              Jump(jumpPower);
-            _currentJump = _availableJumps;
+            _currentJump = MaxJumps;
         };
     }
 
