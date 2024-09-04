@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
+[SelectionBase]
 public class PlayerController : MonoBehaviour
 {
     public int MaxJumps = 1;
