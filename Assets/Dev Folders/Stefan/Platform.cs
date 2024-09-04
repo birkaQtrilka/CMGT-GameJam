@@ -8,9 +8,10 @@ public class Platform : MonoBehaviour
     [SerializeField] float _transferTime = 2f;
     [SerializeField] float _waitTime = 1f;
     [SerializeField] AnimationCurve _moveCurve;
+    public Vector3 Velocity { get; private set; }
+
     //Rigidbody _rigidBody;
     WaitForFixedUpdate _waitForUpdate;
-    Vector3 velocity;
 
     void Awake()
     {
@@ -24,23 +25,23 @@ public class Platform : MonoBehaviour
 
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if(other.TryGetComponent<PlayerController>(out var controller))
-        {
-            other.transform.parent = transform;
+    //void OnTriggerEnter(Collider other)
+    //{
+    //    if(other.TryGetComponent<PlayerController>(out var controller))
+    //    {
+    //        other.transform.parent = transform;
 
-        }
-    }
+    //    }
+    //}
 
-    void OnTriggerExit(Collider other)
-    {
-        if (other.TryGetComponent<PlayerController>(out var controller))
-        {
-            other.transform.parent = null;
-            controller.GiveInertia(velocity);
-        }
-    }
+    //void OnTriggerExit(Collider other)
+    //{
+    //    if (other.TryGetComponent<PlayerController>(out var controller))
+    //    {
+    //        //other.transform.parent = null;
+    //        controller.GiveInertia(Velocity);
+    //    }
+    //}
 
     IEnumerator MoveToAndBack(Transform a, Transform b)
     {
@@ -51,12 +52,12 @@ public class Platform : MonoBehaviour
             //_rigidBody.MovePosition(Vector3.Lerp(a.position, b.position, _moveCurve.Evaluate(currentTime / _transferTime)));
             Vector3 prevPos = transform.position;
             transform.position = Vector3.Lerp(a.position, b.position, _moveCurve.Evaluate(currentTime / _transferTime));
-            velocity = transform.position - prevPos;
+            Velocity = transform.position - prevPos;
             yield return _waitForUpdate;
             currentTime += Time.fixedDeltaTime;
         }
         transform.position = b.position;
-        velocity = Vector3.zero;
+        Velocity = Vector3.zero;
         yield return new WaitForSeconds(_waitTime);
         StartCoroutine(MoveToAndBack(b, a));
     }

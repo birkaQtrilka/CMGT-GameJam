@@ -8,8 +8,8 @@ public class JumpPad : MonoBehaviour
     {
         if (other.TryGetComponent<PlayerController>(out var controller))
         {
-            controller.RegisterJump(_power);
-
+           controller.RegisterJump(_power);
+            //if interacts with ground, look at last frame, else look at current frame
         }
     }
 }

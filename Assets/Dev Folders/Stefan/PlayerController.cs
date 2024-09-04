@@ -29,8 +29,14 @@ public class PlayerController : MonoBehaviour
     Action _jumpCall;
     public bool Grounded => _grounded;
     int _currentJump;
+    //int _lastFrameCurrentJump;
+    Collider[] _collisionResult = new Collider[1];
+    Collider _prevPlatform;
+
     float _speedStartMoveTimer = 0;
     bool _wasGrounded;
+    bool _wasPlatformLastFrame = false;
+
     void Start()
     {
         _currentJump = _availableJumps;
@@ -66,11 +72,13 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        _grounded = Physics.CheckSphere(GetGroundCheckerPos(), _groundCheckerRadius, 1 << LayerMask.NameToLayer("Ground"));
-        
+        _grounded = GetIsGrounded();
         //relative to left and right local axis
         velocity = (transform.right * _movingSignal.x + transform.forward * _movingSignal.z).normalized;
         velocity *= Time.deltaTime * _playerSpeed * GetSmoothSpeedValue();
+
+        DoPlatform();
+
         if (_jumpPressed)
         {
             if(_currentJump > 0)
@@ -84,6 +92,7 @@ public class PlayerController : MonoBehaviour
 
         if (_grounded)
         {
+            //_lastFrameCurrentJump = _currentJump;
             _currentJump = _availableJumps;
             _speedBeforeJump = Vector3.zero;
 
@@ -103,13 +112,43 @@ public class PlayerController : MonoBehaviour
             }
             Strafe();
         }
+
         _jumpCall?.Invoke();
         _jumpCall = null;
+
         Vector3 position = transform.position + velocity;
         //if (transform.parent != null)
             //position = transform.parent.TransformPoint(transform.localPosition + velocity);
         //_rigidbody.MovePosition(position);
         transform.position = position;
+    }
+
+    void DoPlatform()
+    {
+        Collider col = _collisionResult[0];
+        if (col != null && col.CompareTag("Platform"))
+        {
+            if(!_wasPlatformLastFrame)
+            {//onEnter
+                _prevPlatform = col;
+                transform.parent = col.transform;
+                _wasPlatformLastFrame = true;
+            }
+            //onStay
+        }
+        else
+        {
+            if(_wasPlatformLastFrame)
+            {//on exit
+                transform.parent = null;
+                var platform = _prevPlatform.GetComponent<Platform>();
+                GiveInertia(platform.Velocity);
+                _prevPlatform = null;
+            }
+            _wasPlatformLastFrame = false;
+        }
+
+
     }
 
     void Jump(float jumpPower)
@@ -123,7 +162,14 @@ public class PlayerController : MonoBehaviour
 
     public void RegisterJump(float jumpPower)
     {
-        _jumpCall = () => Jump(jumpPower);
+        //int jumpCount = _grounded ? _lastFrameCurrentJump : _currentJump;
+
+        _jumpCall = () =>
+        {
+            //Debug.Log(jumpCount);
+             Jump(jumpPower);
+            _currentJump = _availableJumps;
+        };
     }
 
     IEnumerator JumpRoutine(float jumpPower)
@@ -155,6 +201,17 @@ public class PlayerController : MonoBehaviour
     Vector3 GetGroundCheckerPos()
     {
         return _collider.transform.position - _collider.transform.up * (_collider.bounds.extents.y - _groundCheckerRadius + 0.01f);
+    }
+
+    bool GetIsGrounded()
+    {
+        int collisions = Physics.OverlapSphereNonAlloc(GetGroundCheckerPos(), _groundCheckerRadius, _collisionResult, 1 << LayerMask.NameToLayer("Ground"));
+        
+        if (collisions > 0)
+            return true;
+
+        _collisionResult[0] = null;
+        return false;
     }
 
     float GetSmoothSpeedValue()
