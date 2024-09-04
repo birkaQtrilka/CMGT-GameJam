@@ -38957,7 +38957,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a87c2192b72f3044cb7e331a9509d54f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerSpeed: 3.34
+  PlayerSpeed: 11.93
   StrafePlayerSpeed: 1.9
   _playerSpeedIncrease: 8
   _jumpPower: 7.04
@@ -42306,7 +42306,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentCheckpoint: {fileID: 0}
-  player: {fileID: 1443699989}
+  player: {fileID: 1443699991}
 --- !u!1001 &1615599609
 PrefabInstance:
   m_ObjectHideFlags: 0

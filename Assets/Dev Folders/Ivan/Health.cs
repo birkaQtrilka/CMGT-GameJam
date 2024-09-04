@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class Health : MonoBehaviour
 {
@@ -20,8 +22,12 @@ public class Health : MonoBehaviour
     public Volume volume;
     void Start()
     {
+        CheckpointManager.checkpointManager.player = this; 
         volume = FindObjectOfType<Volume>();
-        RestoreHealth();
+        Respawn();
+    }
+    private void Awake()
+    {
     }
     private void ChangeIndicator()
     {
@@ -29,6 +35,11 @@ public class Health : MonoBehaviour
         {
             vignette.intensity.value = (1 - (float)health / maxHealth)/2;
         }
+    }
+    public void Respawn()
+    {
+        transform.position = CheckpointManager.checkpointManager.currentCheckpoint.position + new Vector3(0, 1, 0);
+        RestoreHealth();
     }
     public void RestoreHealth()
     {
@@ -47,6 +58,7 @@ public class Health : MonoBehaviour
         ClampHealth();
         if (health == 0)
         {
+            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
             OnDeath?.Invoke();
         }
         ChangeIndicator();
@@ -72,18 +84,6 @@ public class Health : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             Kill();
-        }
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Checkpoint"))
-        {
-            Debug.Log("Checkpoint taken: " + other.name);
-            Checkpoint checkpoint = other.GetComponent<Checkpoint>();
-            if (checkpoint != null)
-            {
-                OnCheckpointTake?.Invoke(checkpoint);
-            }
         }
     }
     private void OnTriggerStay(Collider other)

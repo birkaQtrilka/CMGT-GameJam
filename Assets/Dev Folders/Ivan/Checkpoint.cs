@@ -18,11 +18,12 @@ public class Checkpoint : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (manager != null) return;
+        if (manager == null) return;
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Checkpoint taken: " + name);
+            manager.currentCheckpoint = transform;
 
+            Debug.Log("Checkpoint taken: " + name);
             //change checkpoint color or whatever here
         }
 
