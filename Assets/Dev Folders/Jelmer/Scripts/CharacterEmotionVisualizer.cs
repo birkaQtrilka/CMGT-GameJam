@@ -1,15 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+public enum Emotion { Happy, Sad, Fear, Anger };
 
 public class CharacterEmotionVisualizer : MonoBehaviour
 {
-    public Texture2D[] bodyTextures;
-    public Renderer bodyRenderer;
+    [SerializeField] Texture2D[] _bodyTextures;
+    [SerializeField] Renderer _bodyRenderer;
 
-    public GameObject[] heads;
+    [SerializeField] GameObject[] _heads;
 
-    public enum Emotion { Happy, Sad, Fear, Anger};
 
     public void ChangeEmotion(Emotion emotion)
     {
@@ -21,11 +19,11 @@ public class CharacterEmotionVisualizer : MonoBehaviour
             case Emotion.Anger: headIndex = 3; break;
         }
 
-        for (int i = 0; i < heads.Length; i++)
+        for (int i = 0; i < _heads.Length; i++)
         {
-            heads[i].SetActive(i == headIndex);
+            _heads[i].SetActive(i == headIndex);
             if(i == headIndex)
-                bodyRenderer.material.mainTexture = bodyTextures[i];
+                _bodyRenderer.material.mainTexture = _bodyTextures[i];
         }
     }
 }

@@ -5,11 +5,12 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class PlayerController : MonoBehaviour
 {
-    public float PlayerSpeed;
-    public float StrafePlayerSpeed;
     public int MaxJumps = 1;
 
+    [field:SerializeField] public float PlayerSpeed { get; private set; } = 10f;
+    [field:SerializeField] public float StrafePlayerSpeed { get; private set; } = 1f;
     [SerializeField] float _playerSpeedIncrease = 3.7f;
+    [SerializeField] float _rollSpeed = 20f;
     [SerializeField] float _jumpPower;
     [SerializeField] AnimationCurve _jumpCurve;
     [SerializeField] float _fallAcceleration;
@@ -38,9 +39,18 @@ public class PlayerController : MonoBehaviour
     bool _wasGrounded;
     bool _wasPlatformLastFrame = false;
 
+    Animator _animator;
+    Coroutine _rollCoroutine;
+
+    Vector3 _originalLocalPosition;
+    float _originalRunPlayerSpeed;
+    float _originalStrafePlayerSpeed;
+    bool _wasIdle;
+
     void Start()
     {
         _currentJump = MaxJumps;
+        _animator = GetComponentInChildren<Animator>();
     }
 
     void OnDrawGizmos()
@@ -86,25 +96,39 @@ public class PlayerController : MonoBehaviour
             {
                 Jump(_jumpPower);
                 _grounded = false;
+                _animator.SetTrigger("Jump");
             }
             _jumpPressed = false;
 
         }
 
         if (_grounded)
-        {
+        {//On run stay
             //_lastFrameCurrentJump = _currentJump;
             _currentJump = MaxJumps;
             _speedBeforeJump = Vector3.zero;
 
-            if (!_wasGrounded)//for only one frame
+            SetRunningOrIdleAnimation();
+
+            if (!_wasGrounded)//On Ground hit
             {
                 _rigidbody.velocity = Vector3.zero;
                 _wasGrounded = true;
+                _animator.SetTrigger("Land");
+                
+                //_animator.SetBool("Running", true);
             }
+
+            if(IsNotMoving())
+                StopRoll();
         }
         else
         {
+            if (_wasGrounded)
+            {//on air enter
+                //stop rolling
+                StopRoll();
+            }
             _wasGrounded = false;
             bool isFalling = _rigidbody.velocity.y < 0;
             if (isFalling && _rigidbody.velocity.y > -_fallSpeedCap)
@@ -112,6 +136,7 @@ public class PlayerController : MonoBehaviour
                 _rigidbody.AddForce(-Vector3.up * _fallAcceleration);
             }
             Strafe();
+
         }
 
         _jumpCall?.Invoke();
@@ -122,6 +147,81 @@ public class PlayerController : MonoBehaviour
             //position = transform.parent.TransformPoint(transform.localPosition + velocity);
         //_rigidbody.MovePosition(position);
         transform.position = position;
+    }
+
+    void SetRunningOrIdleAnimation()
+    {
+        //if (!_wasIdle && _movingSignal == Vector3.zero)
+        //{
+        //    _animator.SetBool("Running", false);
+        //    _wasIdle = true;
+        //}
+        //else
+        //{
+        //    if (_wasIdle && _movingSignal != Vector3.zero)
+        //    {
+        //        _animator.SetBool("Running", true);
+
+        //    }
+        //    _wasIdle = false;
+        //}
+         _animator.SetBool("Running", _movingSignal != Vector3.zero);
+
+    }
+
+    public void Roll(float runSpeed, float strafeSpeed, float time, float heightOffset)
+    {
+        if (_movingSignal == Vector3.zero) return;
+
+        _originalRunPlayerSpeed = PlayerSpeed;
+        _originalStrafePlayerSpeed = StrafePlayerSpeed;
+
+        PlayerSpeed = runSpeed;
+        StrafePlayerSpeed = strafeSpeed;
+
+        _animator.SetBool("Running", false);
+        _animator.SetBool("Rolling", true);
+        _originalLocalPosition = _animator.transform.localPosition;
+        _animator.transform.localPosition += Vector3.up * heightOffset;
+
+        _rollCoroutine = StartCoroutine(DoRollAnimation(time));
+    }
+
+    public void StopRoll()
+    {
+        if (_rollCoroutine == null) return;
+
+        PlayerSpeed = _originalRunPlayerSpeed;
+        StrafePlayerSpeed = _originalStrafePlayerSpeed;
+        
+        _animator.SetBool("Running", true);
+        _animator.SetBool("Rolling", false);
+        
+        StopCoroutine(_rollCoroutine);
+        _rollCoroutine = null;
+
+        _animator.transform.localRotation = Quaternion.identity;
+        _animator.transform.localPosition = _originalLocalPosition;
+    }
+
+
+    IEnumerator DoRollAnimation(float time)
+    {
+        float currTime = 0;
+        float currAngle = 0;
+        while(currTime < time)
+        {
+            _animator.transform.localRotation = Quaternion.AngleAxis(currAngle, Vector3.right);
+
+            currAngle += Time.deltaTime * _rollSpeed;
+            yield return null;
+            currTime += Time.deltaTime;
+        }
+    }
+
+    public bool IsNotMoving()
+    {
+        return _movingSignal == Vector3.zero;
     }
 
     void DoPlatform()
