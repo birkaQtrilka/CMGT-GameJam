@@ -2975,10 +2975,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 833b10f9578d97e42a734e8d9acaf5d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  happinessClip: {fileID: 8300000, guid: 06de5346af50de44fb9e03f76b597318, type: 3}
-  fearClip: {fileID: 8300000, guid: 7c4a429eaec873348bb0db26228bd426, type: 3}
-  angerClip: {fileID: 8300000, guid: 4c49f0dd3b2f3174e921ae5b0a55a4a3, type: 3}
-  sadnessClip: {fileID: 8300000, guid: fae6e70442f54204f8bcfa2a2fcc1c78, type: 3}
+  happinessClip: {fileID: 8300000, guid: f183f9012f7c4e748a7b96a5dcbee960, type: 3}
+  fearClip: {fileID: 8300000, guid: f183f9012f7c4e748a7b96a5dcbee960, type: 3}
+  angerClip: {fileID: 8300000, guid: a0c26b88bb75edb4fac4ddea2758e49e, type: 3}
+  sadnessClip: {fileID: 8300000, guid: e29701e65911bd14a9bd0852487712f6, type: 3}
+  transitionTime: 1
 --- !u!4 &106298100
 Transform:
   m_ObjectHideFlags: 0
@@ -2988,7 +2989,7 @@ Transform:
   m_GameObject: {fileID: 106298098}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.248521, y: -7.355784, z: -14.586714}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

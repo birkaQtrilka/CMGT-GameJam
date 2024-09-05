@@ -12,6 +12,12 @@ public class SoundManager : MonoBehaviour
 
     AudioSource source;
     int currentEmotion = 3;
+    int targetEmotion = 3;
+
+    public float transitionTime;
+    float _transitionTime = 0;
+    bool trackSwitched;
+    public float masterVolume;
 
     public static SoundManager main;
 
@@ -29,6 +35,7 @@ public class SoundManager : MonoBehaviour
     {
         source = GetComponent<AudioSource>();
         source.loop = true;
+        SwitchTrack(3);
     }
     // Update is called once per frame
     void Update()
@@ -45,8 +52,22 @@ public class SoundManager : MonoBehaviour
 
         if (newEmotion >= 0 && currentEmotion != newEmotion)
         {
-            currentEmotion = newEmotion;
-            SwitchTrack(currentEmotion);
+            targetEmotion = newEmotion;
+            _transitionTime = transitionTime;
+            trackSwitched = false;
+
+        }
+        if (_transitionTime> 0)
+        {
+            _transitionTime -= Time.deltaTime;
+            float fac = _transitionTime / transitionTime;
+            source.volume = Mathf.Abs(fac * 2 - 1) * masterVolume;
+            if (fac < 0.5f && !trackSwitched)
+            {
+                SwitchTrack(targetEmotion);
+                currentEmotion = targetEmotion;
+                trackSwitched = true;
+            }
         }
     }
 
@@ -63,6 +84,23 @@ public class SoundManager : MonoBehaviour
             case 3:
                 source.clip = sadnessClip; break;
         }
+
         source.Play();
+    }
+
+    public void ChangeMasterVolume (float fac)
+    {
+        masterVolume = fac;
+        source.volume = masterVolume;
+    }
+
+    public void PlayerRespawn()
+    {
+        if (currentEmotion != 3)
+        {
+            _transitionTime = transitionTime;
+            targetEmotion = 3;
+            trackSwitched = false;
+        }
     }
 }

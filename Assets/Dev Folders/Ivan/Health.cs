@@ -40,6 +40,7 @@ public class Health : MonoBehaviour
     {
         transform.position = CheckpointManager.checkpointManager.currentCheckpoint.position + new Vector3(0, 1, 0);
         RestoreHealth();
+        SoundManager.main.PlayerRespawn();
     }
     public void RestoreHealth()
     {
