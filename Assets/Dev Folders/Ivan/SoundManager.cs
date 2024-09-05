@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class SoundManager : MonoBehaviour
 {
@@ -11,6 +13,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip sadnessClip;
 
     AudioSource source;
+    Vignette vignette;
     int currentEmotion = 3;
     int targetEmotion = 3;
 
@@ -56,6 +59,8 @@ public class SoundManager : MonoBehaviour
             _transitionTime = transitionTime;
             trackSwitched = false;
 
+            vignette = FindObjectOfType<Vignette>();
+
         }
         if (_transitionTime> 0)
         {
@@ -68,11 +73,23 @@ public class SoundManager : MonoBehaviour
                 currentEmotion = targetEmotion;
                 trackSwitched = true;
             }
+            if (vignette != null)
+            {
+                switch (targetEmotion)
+                {
+                    case 0: vignette.color.value = Color.magenta; break;
+                    case 1: vignette.color.value = Color.yellow; break;
+                    case 2: vignette.color.value = Color.red; break;
+                    case 3: vignette.color.value = Color.blue; break;
+                }
+                vignette.intensity.value = fac / 2;
+            }
         }
     }
 
     void SwitchTrack(int mode)
     {
+
         switch (mode)
         {
             case 0:

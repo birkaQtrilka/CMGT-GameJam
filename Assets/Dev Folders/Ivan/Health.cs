@@ -33,6 +33,7 @@ public class Health : MonoBehaviour
     {
         if (volume.profile.TryGet(out Vignette vignette)) // for e.g set vignette intensity to .4f
         {
+            vignette.color.value = Color.Lerp (Color.red, Color.black, 0.5f);
             vignette.intensity.value = (1 - (float)health / maxHealth)/2;
         }
     }
