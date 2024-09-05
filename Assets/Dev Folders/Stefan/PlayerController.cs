@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 
 [SelectionBase]
@@ -19,6 +20,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Rigidbody _rigidbody;
     [SerializeField] Collider _collider;
     [SerializeField] float _groundCheckerRadius;
+
+    [SerializeField] float _rotationSpeed;
+    float _currAngle;
+
     //[SerializeField] float _groundCheckerOffset;
     Vector3 _movingSignal;
     Vector3 velocity;
@@ -71,10 +76,13 @@ public class PlayerController : MonoBehaviour
         _movingSignal = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
         if(Input.GetKeyDown(KeyCode.Space))
             _jumpPressed = true;
-        
-
+        _currAngle += _movingSignal.x * _rotationSpeed * Time.deltaTime;
+        //transform.rotation = Quaternion.AngleAxis(_currAngle, transform.up);
+        //_movingSignal.x = 0;
         //_rigidbody.MovePosition(transform.position + );
     }
+
+    //the bug is t
 
     public void GiveInertia(Vector3 velocity)
     {
@@ -147,6 +155,19 @@ public class PlayerController : MonoBehaviour
             //position = transform.parent.TransformPoint(transform.localPosition + velocity);
         //_rigidbody.MovePosition(position);
         transform.position = position;
+    }
+
+    public void AddJumpCount( int count)
+    {
+        if (_currentJump - count > -1)
+            _currentJump += count;
+    }
+    
+    public void SetCurrentJump(int count)
+    {
+         _currentJump = count;
+
+
     }
 
     void SetRunningOrIdleAnimation()

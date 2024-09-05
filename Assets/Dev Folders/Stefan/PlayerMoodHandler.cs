@@ -82,12 +82,12 @@ public class PlayerMoodHandler : MonoBehaviour
         {
             machine.Controller.MaxJumps = 2;
             machine.Animator.ChangeEmotion(Emotion.Happy);
+
         }
 
         public override void OnTransition(PlayerMoodHandler machine)
         {
             machine.Controller.MaxJumps = 1;
-
         }
     }
 
@@ -115,6 +115,7 @@ public class PlayerMoodHandler : MonoBehaviour
         {
             _flameShooter = machine.Controller.GetComponent<FlameShooter>();
             _flameShooter.enabled = true;
+            _flameShooter.SetFullCooldown();
             machine.Animator.ChangeEmotion(Emotion.Anger);
         }
 
