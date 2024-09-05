@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
 
     Action _jumpCall;
     public bool Grounded => _grounded;
-    int _currentJump;
+    public int _currentJump;
     //int _lastFrameCurrentJump;
     Collider[] _collisionResult = new Collider[1];
     Collider _prevPlatform;
@@ -56,6 +56,8 @@ public class PlayerController : MonoBehaviour
     {
         _currentJump = MaxJumps;
         _animator = GetComponentInChildren<Animator>();
+        _originalRunPlayerSpeed = PlayerSpeed;
+        _originalStrafePlayerSpeed = StrafePlayerSpeed;
     }
 
     void OnDrawGizmos()
@@ -123,11 +125,18 @@ public class PlayerController : MonoBehaviour
                 _rigidbody.velocity = Vector3.zero;
                 _wasGrounded = true;
                 _animator.SetTrigger("Land");
-                
+
+                if (!_animator.GetBool("Rolling")) //Set normal speed when you land while not rolling
+                {
+                    PlayerSpeed = _originalRunPlayerSpeed;
+                    StrafePlayerSpeed = _originalStrafePlayerSpeed;
+                }
+
+
                 //_animator.SetBool("Running", true);
             }
 
-            if(IsNotMoving())
+            if (IsNotMoving())
                 StopRoll();
         }
         else
@@ -212,9 +221,13 @@ public class PlayerController : MonoBehaviour
     {
         if (_rollCoroutine == null) return;
 
-        PlayerSpeed = _originalRunPlayerSpeed;
-        StrafePlayerSpeed = _originalStrafePlayerSpeed;
-        
+        if (Grounded) //Set normal speed when stop rolling on the ground
+        {
+            PlayerSpeed = _originalRunPlayerSpeed;
+            StrafePlayerSpeed = _originalStrafePlayerSpeed;
+        }
+
+
         _animator.SetBool("Running", true);
         _animator.SetBool("Rolling", false);
         

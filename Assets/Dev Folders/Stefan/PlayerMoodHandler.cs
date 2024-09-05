@@ -82,12 +82,14 @@ public class PlayerMoodHandler : MonoBehaviour
         {
             machine.Controller.MaxJumps = 2;
             machine.Animator.ChangeEmotion(Emotion.Happy);
-
+            machine.Controller._currentJump++;
         }
 
         public override void OnTransition(PlayerMoodHandler machine)
         {
             machine.Controller.MaxJumps = 1;
+            machine.Controller._currentJump--;
+
         }
     }
 
