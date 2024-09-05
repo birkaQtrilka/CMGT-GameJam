@@ -50,9 +50,15 @@ public class Lever : MonoBehaviour
                 source.Play();
                 isActivated = !isActivated;
                 if (isActivated)
+                {
+                    source.pitch = 1.2f;
                     LeverActivated?.Invoke();
+                }
                 else
+                {
+                    source.pitch = 0.8f;
                     LeverDeactivated?.Invoke();
+                }
             }
         }
     }
