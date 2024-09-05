@@ -234,9 +234,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1918719c468f3d747a51271875fe735a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelSound: {fileID: 8300000, guid: eccb0e5d102854346ab9bf941db3c187, type: 3}
   LeverActivated:
     m_PersistentCalls:
       m_Calls: []
   LeverDeactivated:
     m_PersistentCalls:
       m_Calls: []
+  isActivated: 0

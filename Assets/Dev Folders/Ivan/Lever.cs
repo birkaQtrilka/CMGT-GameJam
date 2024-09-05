@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class Lever : MonoBehaviour
 {
+    public AudioClip levelSound;
+    AudioSource source;
     public UnityEvent LeverActivated;
     public UnityEvent LeverDeactivated;
     public bool isActivated;
@@ -12,7 +15,8 @@ public class Lever : MonoBehaviour
     bool inArea = false;
     void Start()
     {
-        
+        source = transform.AddComponent<AudioSource>();
+        source.clip = levelSound;
     }
 
     // Update is called once per frame
@@ -43,6 +47,7 @@ public class Lever : MonoBehaviour
             if (shouldInteract)
             {
                 shouldInteract = false;
+                source.Play();
                 isActivated = !isActivated;
                 if (isActivated)
                     LeverActivated?.Invoke();
