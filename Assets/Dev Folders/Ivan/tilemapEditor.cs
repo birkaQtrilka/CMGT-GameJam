@@ -1,10 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using UnityEditor.Tilemaps;
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
 [ExecuteInEditMode]
 public class PrintAwake : MonoBehaviour
 {
@@ -23,3 +19,4 @@ public class PrintAwake : MonoBehaviour
             brush.ChangeZPosition(-1);
     }
 }
+#endif

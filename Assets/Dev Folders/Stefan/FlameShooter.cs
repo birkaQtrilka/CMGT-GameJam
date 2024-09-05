@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class FlameShooter : MonoBehaviour
@@ -6,7 +7,9 @@ public class FlameShooter : MonoBehaviour
     [SerializeField] LayerMask _destroyableObjectMask;
     [SerializeField] float _range;
     [SerializeField] ParticleSystem _fireBreathParticles;
-
+    [SerializeField] AudioClip _breathSound;
+    [SerializeField] AudioClip _hitSound;
+    AudioSource _audio;
     float _currTimer;
 
     void OnDrawGizmos()
@@ -18,7 +21,7 @@ public class FlameShooter : MonoBehaviour
     private void Start()
     {
         _currTimer = _cooldown;
-
+        _audio = GetComponent<AudioSource>();
     }
 
     public void SetCoolDown(float val)
@@ -39,12 +42,24 @@ public class FlameShooter : MonoBehaviour
         {
             _currTimer = 0;
             _fireBreathParticles.Play();
-
+            PlaySound(_breathSound);
             //play animation
             if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, _range, _destroyableObjectMask.value))
             {
+                StartCoroutine(A());
                 Destroy(hit.collider.gameObject);
             }
         }    
+    }
+    IEnumerator A()
+    {
+        yield return new WaitForSeconds(.4f);
+        PlaySound(_hitSound);
+
+    }
+    void PlaySound(AudioClip s)
+    {
+        _audio.clip = s;
+        _audio.Play();
     }
 }

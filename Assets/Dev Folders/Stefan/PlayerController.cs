@@ -23,6 +23,10 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] float _rotationSpeed;
     float _currAngle;
+    [SerializeField] AudioClip _jumpSound;
+    [SerializeField] AudioClip _jumpAbilitySound;
+    [SerializeField] AudioClip _rollSound;
+    AudioSource _audio;
 
     //[SerializeField] float _groundCheckerOffset;
     Vector3 _movingSignal;
@@ -32,7 +36,6 @@ public class PlayerController : MonoBehaviour
     [Header("For debugging only, don't touch it")]
     [SerializeField] bool _jumpPressed;
     [SerializeField] bool _grounded;
-
     Action _jumpCall;
     public bool Grounded => _grounded;
     public int _currentJump;
@@ -58,6 +61,7 @@ public class PlayerController : MonoBehaviour
         _animator = GetComponentInChildren<Animator>();
         _originalRunPlayerSpeed = PlayerSpeed;
         _originalStrafePlayerSpeed = StrafePlayerSpeed;
+        _audio = GetComponent<AudioSource>();
     }
 
     void OnDrawGizmos()
@@ -91,6 +95,12 @@ public class PlayerController : MonoBehaviour
         _speedBeforeJump += velocity;
     }
 
+    void PlaySound(AudioClip audioClip)
+    {
+        _audio.clip = audioClip;
+        _audio.Play();
+    }
+
     void FixedUpdate()
     {
         _grounded = GetIsGrounded();
@@ -107,6 +117,9 @@ public class PlayerController : MonoBehaviour
                 Jump(_jumpPower);
                 _grounded = false;
                 _animator.SetTrigger("Jump");
+                PlaySound(_jumpSound);
+
+
             }
             _jumpPressed = false;
 
@@ -203,6 +216,8 @@ public class PlayerController : MonoBehaviour
     {
         if (_movingSignal == Vector3.zero) return;
 
+        PlaySound(_rollSound);
+
         _originalRunPlayerSpeed = PlayerSpeed;
         _originalStrafePlayerSpeed = StrafePlayerSpeed;
 
@@ -226,7 +241,8 @@ public class PlayerController : MonoBehaviour
             PlayerSpeed = _originalRunPlayerSpeed;
             StrafePlayerSpeed = _originalStrafePlayerSpeed;
         }
-
+        if(_audio.clip == _rollSound)
+            _audio.Stop();
 
         _animator.SetBool("Running", true);
         _animator.SetBool("Rolling", false);
