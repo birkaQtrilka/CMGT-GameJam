@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8968340020796957901
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Skybox
+  m_Shader: {fileID: -6465566751694194690, guid: 586277ad6b6d0f04bb89d5de5cd47cb1,
+    type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - Vector1_08ec5d0e2f6543a992fbd4d19e51aee9: 1.85
+    - Vector1_0d816eb2ad2b40e6987420c417e399cc: 0.34
+    - Vector1_188f863856a24b51a7c1ee7d9ebac0f8: 0.494
+    - Vector1_1c68bfd99a9e4b9b8abc4a18dbe7649b: 5.04
+    - Vector1_53d220450ec749769ecf22a1a31aa382: 0.868
+    - Vector1_7b1d3b33aa2246af941869d66c483a00: 0.5
+    - Vector1_ae4d9838d8284fdf8adeba5b29611e23: 0.001
+    - Vector1_af2f75e80ed541aab98903008f8d6298: 0.422
+    - Vector1_e7a1d068b2054a14b5b8f5b52345a91f: 57.33
+    - Vector1_f919a2c93e5b4681b826ed33092f07c3: 0.43
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    m_Colors:
+    - Color_0c136c9093d943bf9168500f0e919e4a: {r: 1, g: 1, b: 1, a: 0}
+    - Color_402ebb67c96b4725925e83b38ca11216: {r: 1, g: 1, b: 1, a: 0}
+    - Color_9e887f5e49814ce0bc5af9e85ad27c74: {r: 1, g: 0.6179246, b: 0.9528948, a: 0}
+    - Color_a2046cc8945b4e83baa5871f6cb31ec3: {r: 1, g: 1, b: 1, a: 0}
+    - Color_da04ce25736a441bbf8117f087b88a30: {r: 1, g: 1, b: 1, a: 0}
+    - Color_da07d05b24c247519d9079093ce833b9: {r: 0.40396938, g: 0.91216904, b: 0.9622642,
+        a: 0}
+    - Vector3_8d0671b272f14a64ab1d5ac31d3dcc11: {r: 0.5, g: -0.94, b: -0.5, a: 0}
+  m_BuildTextureStacks: []
