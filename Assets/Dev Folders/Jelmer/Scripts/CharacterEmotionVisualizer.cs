@@ -1,5 +1,5 @@
 using UnityEngine;
-public enum Emotion { Happy, Sad, Fear, Anger };
+public enum Emotion { Happy, Sad, Fear, Anger, None };
 
 public class CharacterEmotionVisualizer : MonoBehaviour
 {

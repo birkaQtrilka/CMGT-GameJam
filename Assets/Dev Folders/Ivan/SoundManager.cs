@@ -7,15 +7,17 @@ using UnityEngine.Rendering.Universal;
 
 public class SoundManager : MonoBehaviour
 {
-    public AudioClip happinessClip;
-    public AudioClip fearClip;
-    public AudioClip angerClip;
-    public AudioClip sadnessClip;
+    PlayerMoodHandler _moodManager;
+
+
+    [SerializeField] AudioClip happinessClip;
+    [SerializeField] AudioClip fearClip;
+    [SerializeField] AudioClip angerClip;
+    [SerializeField] AudioClip sadnessClip;
 
     AudioSource source;
-    Vignette vignette;
-    int currentEmotion = 3;
-    int targetEmotion = 3;
+    Emotion currentEmotion;
+    Emotion targetEmotion;
 
     public float transitionTime;
     float _transitionTime = 0;
@@ -24,7 +26,7 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager main;
 
-    private void Awake()
+    void Awake()
     {
         if (main == null)
             main = this;
@@ -34,32 +36,26 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
-    private void Start()
+    void Start()
     {
+        _moodManager = FindObjectOfType<PlayerMoodHandler>();
         source = GetComponent<AudioSource>();
         source.loop = true;
-        SwitchTrack(3);
+        SwitchTrack(_moodManager.StartEmotion);
     }
+
     // Update is called once per frame
     void Update()
     {
-        int newEmotion = -1;
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            newEmotion = 0;
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-            newEmotion = 1;
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-            newEmotion = 2;
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-            newEmotion = 3;
+        Emotion newEmotion = PlayerMoodHandler.GetEmotionFromControl();
 
-        if (newEmotion >= 0 && currentEmotion != newEmotion)
+        if (newEmotion != Emotion.None && currentEmotion != newEmotion)
         {
             targetEmotion = newEmotion;
             _transitionTime = transitionTime;
             trackSwitched = false;
 
-            vignette = FindObjectOfType<Vignette>();
+            //vignette = FindObjectOfType<Vignette>();
 
         }
         if (_transitionTime> 0)
@@ -73,33 +69,32 @@ public class SoundManager : MonoBehaviour
                 currentEmotion = targetEmotion;
                 trackSwitched = true;
             }
-            if (vignette != null)
-            {
-                switch (targetEmotion)
-                {
-                    case 0: vignette.color.value = Color.magenta; break;
-                    case 1: vignette.color.value = Color.yellow; break;
-                    case 2: vignette.color.value = Color.red; break;
-                    case 3: vignette.color.value = Color.blue; break;
-                }
-                vignette.intensity.value = fac / 2;
-            }
+            //if (vignette != null)
+            //{
+            //    switch (targetEmotion)
+            //    {
+            //        case 0: vignette.color.value = Color.magenta; break;
+            //        case 1: vignette.color.value = Color.yellow; break;
+            //        case 2: vignette.color.value = Color.red; break;
+            //        case 3: vignette.color.value = Color.blue; break;
+            //    }
+            //    vignette.intensity.value = fac / 2;
+            //}
         }
     }
 
-    void SwitchTrack(int mode)
+    void SwitchTrack(Emotion mode)
     {
-
         switch (mode)
         {
-            case 0:
-                source.clip = fearClip; break;
-            case 1:
+            case Emotion.Happy:
                 source.clip = happinessClip; break;
-            case 2:
-                source.clip = angerClip; break;
-            case 3:
+            case Emotion.Sad:
                 source.clip = sadnessClip; break;
+            case Emotion.Fear:
+                source.clip = fearClip; break;
+            case Emotion.Anger:
+                source.clip = angerClip; break;
         }
 
         source.Play();
@@ -113,10 +108,10 @@ public class SoundManager : MonoBehaviour
 
     public void PlayerRespawn()
     {
-        if (currentEmotion != 3)
+        if (currentEmotion != _moodManager.StartEmotion)
         {
             _transitionTime = transitionTime;
-            targetEmotion = 3;
+            targetEmotion = _moodManager.StartEmotion;
             trackSwitched = false;
         }
     }

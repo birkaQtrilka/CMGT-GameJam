@@ -11,7 +11,7 @@ public class Health : MonoBehaviour
     private float damageCooldown;
     public float damageCooldownMax;
     public int health { get; private set; }
-    public event Action OnDeath;
+    //public event Action OnDeath;
     public event Action<Checkpoint> OnCheckpointTake;
     // Start is called before the first frame update
 
@@ -21,9 +21,6 @@ public class Health : MonoBehaviour
         CheckpointManager.checkpointManager.player = this; 
         volume = FindObjectOfType<Volume>();
         Respawn();
-    }
-    private void Awake()
-    {
     }
     private void ChangeIndicator()
     {
@@ -57,7 +54,7 @@ public class Health : MonoBehaviour
         if (health == 0)
         {
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
-            OnDeath?.Invoke();
+            //OnDeath?.Invoke();
         }
         ChangeIndicator();
     }

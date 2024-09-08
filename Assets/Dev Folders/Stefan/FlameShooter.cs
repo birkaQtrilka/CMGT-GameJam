@@ -12,6 +12,8 @@ public class FlameShooter : MonoBehaviour
     AudioSource _audio;
     float _currTimer;
 
+    ParticleSystem[] _particleSystems;
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
@@ -22,6 +24,8 @@ public class FlameShooter : MonoBehaviour
     {
         _currTimer = _cooldown;
         _audio = GetComponent<AudioSource>();
+
+        _particleSystems = _fireBreathParticles.GetComponentsInChildren<ParticleSystem>();
     }
 
     public void SetCoolDown(float val)
@@ -41,7 +45,7 @@ public class FlameShooter : MonoBehaviour
         if(Input.GetMouseButtonDown(0) && _currTimer > _cooldown)
         {
             _currTimer = 0;
-            _fireBreathParticles.Play();
+            PlayFireVFX();
             PlaySound(_breathSound);
             //play animation
             if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, _range, _destroyableObjectMask.value))
@@ -51,12 +55,20 @@ public class FlameShooter : MonoBehaviour
             }
         }    
     }
+
+    void PlayFireVFX()
+    {
+        foreach (ParticleSystem particle in _particleSystems)
+            particle.Play();
+    }
+
     IEnumerator A()
     {
         yield return new WaitForSeconds(.4f);
         PlaySound(_hitSound);
 
     }
+
     void PlaySound(AudioClip s)
     {
         _audio.clip = s;

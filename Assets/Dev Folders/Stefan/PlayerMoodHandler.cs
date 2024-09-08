@@ -1,15 +1,21 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerController))]
 public class PlayerMoodHandler : MonoBehaviour
 {
-    [field: SerializeField] LayerMask SadMask;
+    public event Action<Emotion> MoodChanged;
+
+    [SerializeField] LayerMask SadMask;
+    [SerializeField] Emotion _startEmotion;
 
     public PlayerController Controller { get; private set; }
     public Collider ControllerCollider { get; private set; }
     public CharacterEmotionVisualizer Animator { get; private set; }
-    State _currentState;
+    public Emotion CurrrentEmotion { get; private set; }
+    public Emotion StartEmotion => _startEmotion;
 
+    State _currentState;
     readonly Fear _fear = new();
     readonly Joy _joy = new();
     readonly Angry _angry = new();
@@ -21,37 +27,68 @@ public class PlayerMoodHandler : MonoBehaviour
         ControllerCollider = Controller.GetComponent<Collider>();
         Animator = GetComponentInChildren<CharacterEmotionVisualizer>();
 
-        _currentState = _sad;
+        _currentState = GetState(_startEmotion);
         _currentState.OnEnter(this);
+        CurrrentEmotion = _startEmotion;
+        MoodChanged?.Invoke(_startEmotion);
+    }
+
+    State GetState(Emotion emotion)
+    {
+        return emotion switch
+        {
+            Emotion.Happy => _joy,
+            Emotion.Sad => _sad,
+            Emotion.Fear => _fear,
+            Emotion.Anger => _angry,
+            _ => null,
+        };
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Alpha1))
+        Emotion selectedEmotion = GetEmotionFromControl();
+
+        if(selectedEmotion != Emotion.None)
+            TransitionToState(selectedEmotion);
+
+    }
+    
+    public static Emotion GetEmotionFromControl()
+    {
+        Emotion selectedEmotion = Emotion.None;
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            TransitionToState(_fear);
-        } 
+            selectedEmotion = Emotion.Fear;
+        }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            TransitionToState(_joy);
+            selectedEmotion = Emotion.Happy;
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            TransitionToState(_angry);
+            selectedEmotion = Emotion.Anger;
         }
         else if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            TransitionToState(_sad);
+            selectedEmotion = Emotion.Sad;
         }
-
+        return selectedEmotion;
     }
 
-    void TransitionToState(State state)
+    void TransitionToState(Emotion emotion)
     {
+        State state = GetState(emotion);
+
         Debug.Log("Transitioning to state: " + state.GetType());
+
         _currentState.OnTransition(this);
         _currentState = state;
         _currentState.OnEnter(this);
+
+        CurrrentEmotion = emotion;
+        MoodChanged?.Invoke(emotion);
+
     }
 
     abstract class State

@@ -5,8 +5,7 @@ using UnityEngine.Rendering;
 
 public class PostProcessingController : MonoBehaviour
 {
-    static PostProcessingController instance;
-
+    [SerializeField] PlayerMoodHandler _moodManager;
     [SerializeField] Volume postProcessHappy;
     [SerializeField] Volume postProcessSad;
     [SerializeField] Volume postProcessAngry;
@@ -14,7 +13,19 @@ public class PostProcessingController : MonoBehaviour
 
     [SerializeField] float switchSpeed;
 
-    private void Update()
+    Volume _activeEffect;
+
+    void OnEnable()
+    {
+        _moodManager.MoodChanged += OnMoodChange;
+    }
+
+    void OnDisable()
+    {
+        _moodManager.MoodChanged -= OnMoodChange;
+    }
+
+    void Update()
     {
 
         //this fucking sucks
@@ -24,21 +35,7 @@ public class PostProcessingController : MonoBehaviour
         updatePost(postProcessSad);
         updatePost(postProcessHappy);
 
-        switch (MoodManager.currentMood)
-        {
-            case Mood.angry:
-                postProcessAngry.weight += Time.deltaTime*2*switchSpeed;
-                break;
-            case Mood.fearful:
-                postProcessFearful.weight += Time.deltaTime * 2*switchSpeed;
-                break;
-            case Mood.sad:
-                postProcessSad.weight += Time.deltaTime * 2 * switchSpeed;
-                break;
-            case Mood.happy:
-                postProcessHappy.weight += Time.deltaTime * 2 * switchSpeed;
-                break;
-        }
+        _activeEffect.weight += Time.deltaTime * 2 * switchSpeed;
 
         void updatePost(Volume inquestion)
         {
@@ -47,20 +44,24 @@ public class PostProcessingController : MonoBehaviour
             if(inquestion.weight > 1) inquestion.weight = 1;
         }
     }
-    private void Awake()
-    {
-        if (instance != null)
-        {
-            Debug.LogError("only allowed 1 post processing controller instance.");
-            Destroy(this);
-            return;
-        }
-        instance = this;
-    }
-    private void OnDestroy()
-    {
-        if (instance != this) return;
 
-        instance = null;
+    void OnMoodChange(Emotion emotion)
+    {
+        switch (emotion)
+        {
+            case Emotion.Happy:
+                _activeEffect = postProcessHappy;
+                break;
+            case Emotion.Sad:
+                _activeEffect = postProcessSad;
+                break;
+            case Emotion.Fear:
+                _activeEffect = postProcessFearful;
+                break;
+            case Emotion.Anger:
+                _activeEffect = postProcessAngry;
+                break;
+        }
     }
+
 }
